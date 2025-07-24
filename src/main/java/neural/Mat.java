@@ -8,6 +8,10 @@ public class Mat {
 		this.data = new double[rows][cols];
 	}
 
+	public Mat(double[][] data) {
+		this.data = data;
+	}
+
 	public void init(double val) {
 		for (int i = 0; i < rows(); i++)
 			for (int j = 0; j < cols(); j++)
@@ -16,13 +20,24 @@ public class Mat {
 
 	public void randomize() {
 		for (int i = 0; i < rows(); i++)
-			for (int j = 0; j < cols(); j++)
-				data[i][j] = Math.random();
+			for (int j = 0; j < cols(); j++) {
+				double limit = Math.sqrt(6.0 / (rows() + cols()));
+				data[i][j] = (2 * Math.random() - 1) * limit;
+			}
 	}
-	
-	public int rows() {return data.length;}
-	public int cols() {return data[0].length;}
-	
+
+	public int rows() {
+		return data.length;
+	}
+
+	public int cols() {
+		return data[0].length;
+	}
+
+	public String shape() {
+		return String.format("(%d, %d)", rows(), cols());
+	}
+
 	@Override
 	public String toString() {
 		var text = new StringBuilder();
@@ -34,7 +49,18 @@ public class Mat {
 					text.append(" ");
 			}
 			text.append("]\n");
-		} 
+		}
 		return text.toString();
+	}
+
+	public static Mat of(double[][] data) {
+		return new Mat(data);
+	}
+
+	public static Mat of(double[] data) {
+		Mat mat = new Mat(data.length, 1);
+		for (int i = 0; i < data.length; i++)
+			mat.data[i][0] = data[i];
+		return mat;
 	}
 }
