@@ -1,8 +1,12 @@
 package neural;
 
 import java.util.Random;
+import java.util.function.Function;
 
 public class MatUtils {
+
+	private static final Random rand = new Random(42);
+
 	public static void verifyDim(Mat m, Mat n) {
 		if (m.rows() != n.rows() || m.cols() != n.cols())
 			Error.fatal("Operation can not be performed.");
@@ -43,7 +47,7 @@ public class MatUtils {
 			for (int j = 0; j < n.cols(); j++) {
 				double sum = 0;
 				for (int k = 0; k < m.cols(); k++)
-					sum += m.data[i][k] + n.data[k][j];
+					sum += m.data[i][k] * n.data[k][j];
 				r.data[i][j] = sum;
 			}
 		}
@@ -58,7 +62,7 @@ public class MatUtils {
 			for (int j = 0; j < n.cols(); j++) {
 				double sum = 0;
 				for (int k = 0; k < m.cols(); k++)
-					sum += m.data[i][k] + n.data[k][j];
+					sum += m.data[i][k] * n.data[k][j];
 				r.data[i][j] = sum;
 			}
 		}
@@ -83,72 +87,74 @@ public class MatUtils {
 		Mat r = new Mat(m.rows(), m.cols());
 		for (int i = 0; i < m.rows(); i++)
 			for (int j = 0; j < m.cols(); j++)
-				r.data[i][j] = 1.0 / (1.0 + Math.exp(-m.data[i][j]));
+				r.data[i][j] = Utils.sigmoid(m.data[i][j]);
 		return r;
 	}
 
 	public static Mat dsigmoid(Mat m) {
 		Mat r = new Mat(m.rows(), m.cols());
 		for (int i = 0; i < m.rows(); i++)
-			for (int j = 0; j < m.cols(); j++) {
-				double y = m.data[i][j];
-				r.data[i][j] = y * (1 - y);
-			}
+			for (int j = 0; j < m.cols(); j++)
+				r.data[i][j] = Utils.dsigmoid(m.data[i][j]);
 		return r;
 	}
-	
+
 	public static Mat relu(Mat m) {
-        Mat result = new Mat(m.rows(), m.cols());
-        for (int i = 0; i < m.rows(); i++)
-            for (int j = 0; j < m.cols(); j++)
-                result.data[i][j] = Math.max(0, m.data[i][j]);
-        return result;
-    }
+		Mat r = new Mat(m.rows(), m.cols());
+		for (int i = 0; i < m.rows(); i++)
+			for (int j = 0; j < m.cols(); j++)
+				r.data[i][j] = Utils.relu(m.data[i][j]);
+		return r;
+	}
 
-    public static Mat drelu(Mat m) {
-        Mat result = new Mat(m.rows(), m.cols());
-        for (int i = 0; i < m.rows(); i++)
-            for (int j = 0; j < m.cols(); j++)
-                result.data[i][j] = m.data[i][j] > 0 ? 1 : 0;
-        return result;
-    }
+	public static Mat drelu(Mat m) {
+		Mat r = new Mat(m.rows(), m.cols());
+		for (int i = 0; i < m.rows(); i++)
+			for (int j = 0; j < m.cols(); j++)
+				r.data[i][j] = Utils.drelu(m.data[i][j]);
+		;
+		return r;
+	}
 
-    public static Mat softmax(Mat m) {
-        int rows = m.rows(), cols = m.cols();
-        Mat result = new Mat(rows, cols);
+	public static Mat softmax(Mat m) {
+		Mat r = new Mat(m.rows(), m.cols());
+		for (int j = 0; j < m.cols(); j++) {
+			double max = Double.NEGATIVE_INFINITY;
+			for (int i = 0; i < m.rows(); i++) {
+				if (m.data[i][j] > max)
+					max = m.data[i][j];
+			}
+			double sum = 0.0;
+			for (int i = 0; i < m.rows(); i++) {
+				r.data[i][j] = Math.exp(m.data[i][j] - max);
+				sum += r.data[i][j];
+			}
+			for (int i = 0; i < m.rows(); i++)
+				r.data[i][j] /= sum;
+		}
+		return r;
+	}
 
-        for (int j = 0; j < cols; j++) {
-            double max = Double.NEGATIVE_INFINITY;
-            for (int i = 0; i < rows; i++) {
-                if (m.data[i][j] > max)
-                    max = m.data[i][j];
-            }
+	public static Mat random(int rows, int cols, double min, double max) {
+		Mat r = new Mat(rows, cols);
+		double range = max - min;
+		for (int i = 0; i < rows; i++)
+			for (int j = 0; j < cols; j++)
+				r.data[i][j] = rand.nextDouble() * range + min;
+		return r;
+	}
 
-            double sum = 0.0;
-            for (int i = 0; i < rows; i++) {
-                result.data[i][j] = Math.exp(m.data[i][j] - max);
-                sum += result.data[i][j];
-            }
+	public static Mat map(Mat m, Function<Double, Double> fn) {
+		Mat r = new Mat(m.rows(), m.cols());
+		for (int i = 0; i < m.rows(); i++)
+			for (int j = 0; j < m.cols(); j++)
+				r.data[i][j] = fn.apply(m.data[i][j]);
+		return r;
+	}
 
-            for (int i = 0; i < rows; i++) {
-                result.data[i][j] /= sum;
-            }
-        }
-
-        return result;
-    }
-    
-    private static final Random rand = new Random(42);
-
-    public static Mat random(int rows, int cols, double min, double max) {
-        Mat result = new Mat(rows, cols);
-        double range = max - min;
-
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                result.data[i][j] = rand.nextDouble() * range + min;
-            }
-        }
-        return result;
-    }
+	public static void mapInPlace(Mat m, Function<Double, Double> fn) {
+		for (int i = 0; i < m.rows(); i++)
+			for (int j = 0; j < m.cols(); j++)
+				m.data[i][j] = fn.apply(m.data[i][j]);
+	}
 }

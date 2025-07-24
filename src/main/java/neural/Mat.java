@@ -6,6 +6,9 @@ public class Mat {
 
 	public Mat(int rows, int cols) {
 		this.data = new double[rows][cols];
+		for (int i = 0; i < rows(); i++)
+			for (int j = 0; j < cols(); j++)
+				this.data[i][j] = (2 * Math.random() - 1);
 	}
 
 	public Mat(double[][] data) {
@@ -17,13 +20,11 @@ public class Mat {
 			for (int j = 0; j < cols(); j++)
 				data[i][j] = val;
 	}
-
-	public void randomize() {
+	
+	public void random() {
 		for (int i = 0; i < rows(); i++)
-			for (int j = 0; j < cols(); j++) {
-				double limit = Math.sqrt(6.0 / (rows() + cols()));
-				data[i][j] = (2 * Math.random() - 1) * limit;
-			}
+			for (int j = 0; j < cols(); j++)
+				this.data[i][j] = (2 * Math.random() - 1);
 	}
 
 	public int rows() {
@@ -40,17 +41,18 @@ public class Mat {
 
 	@Override
 	public String toString() {
-		var text = new StringBuilder();
-		for (int i = 0; i < rows(); i++) {
-			text.append("[");
-			for (int j = 0; j < cols(); j++) {
-				text.append(data[i][j]);
-				if (j < cols() - 1)
-					text.append(" ");
-			}
-			text.append("]\n");
-		}
-		return text.toString();
+		return shape();
+//		var text = new StringBuilder();
+//		for (int i = 0; i < rows(); i++) {
+//			text.append("[");
+//			for (int j = 0; j < cols(); j++) {
+//				text.append(data[i][j]);
+//				if (j < cols() - 1)
+//					text.append(" ");
+//			}
+//			text.append("]\n");
+//		}
+//		return text.toString();
 	}
 
 	public static Mat of(double[][] data) {
