@@ -12,12 +12,13 @@ public class Main {
 		List<Mat> testX = data.getTestX();
 		List<Mat> testY = data.getTestY();
 		
-		NeuralNet net = new NNSigmoid(new int[] {28 * 28, 32, 16, 10});
+		NeuralNet net = new NNSigmoid(new int[]{28*28, 128, 64, 10});
+		//NeuralNet net = new MLPRelu(28*28, 128, 10);
 		
-		System.out.println("Training....");
+		System.out.println("Training...");
 		long start = System.currentTimeMillis();
 		int matchedCount = 0;
-		for (int epoch = 0; epoch < 2; epoch++) {
+		for (int epoch = 0; epoch < 3; epoch++) {
 			matchedCount = 0;
 			for (int m = 0; m < trainX.size(); m++) {
 				Mat in = trainX.get(m);
@@ -32,7 +33,7 @@ public class Main {
 		}
 		long end = System.currentTimeMillis();
 		System.out.printf("Total training time: %d millis.\n", (end - start));
-		System.out.println("Testing....");
+		System.out.println("Testing...");
 		matchedCount = 0;
 		for (int m = 0; m < testX.size(); m++) {
 			Mat out = net.predict(testX.get(m));
