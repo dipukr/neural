@@ -12,8 +12,8 @@ public class Main {
 		List<Mat> testX = data.getTestX();
 		List<Mat> testY = data.getTestY();
 		
-		NeuralNet net = new NNSigmoid(new int[]{28*28, 128, 64, 10});
-		//NeuralNet net = new MLPRelu(28*28, 128, 10);
+		//NeuralNet net = new NNSigmoid(new int[]{28*28, 128, 64, 10});
+		NeuralNet net = new MLPRelu(28*28, 128, 10);
 		
 		System.out.println("Training...");
 		long start = System.currentTimeMillis();

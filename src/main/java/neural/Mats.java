@@ -3,7 +3,7 @@ package neural;
 import java.util.Random;
 import java.util.function.Function;
 
-public class MatUtils {
+public class Mats {
 
 	private static final Random rand = new Random(42);
 
