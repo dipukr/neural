@@ -4,7 +4,7 @@ import java.util.List;
 
 public class Main {
 	public static void main(final String[] args) throws Exception {
-		String fileName = "/home/dkumar/RESEARCH/mnist.bin";
+		String fileName = "/home/dkumar/Data/mnist.bin";
 		MNISTData data = new MNISTData(fileName);
 		
 		List<Mat> trainX = data.getTrainX();
@@ -12,8 +12,8 @@ public class Main {
 		List<Mat> testX = data.getTestX();
 		List<Mat> testY = data.getTestY();
 		
-		//NeuralNet net = new NNSigmoid(new int[]{28*28, 128, 64, 10});
-		NeuralNet net = new MLPRelu(28*28, 128, 10);
+		//NeuralNet net = new NNSigmoid(new int[]{784, 128, 64, 10});
+		NeuralNet net = new MLPSigmoid(784, 32, 10);
 		
 		System.out.println("Training...");
 		long start = System.currentTimeMillis();

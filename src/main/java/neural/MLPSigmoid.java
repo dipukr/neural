@@ -4,13 +4,13 @@ public class MLPSigmoid implements NeuralNet {
 
 	private Mat w1, w2;
 	private Mat b1, b2;
-	private double lr = 0.01;
+	private double lr = 0.1;
 
 	public MLPSigmoid(int inputSize, int hiddenSize, int outputSize) {
-		w1 = Mats.random(hiddenSize, inputSize, -1, 1);
-		w2 = Mats.random(outputSize, hiddenSize, -1, 1);
-		b1 = Mats.random(hiddenSize, 1, -1, 1);
-		b2 = Mats.random(outputSize, 1, -1, 1);
+		this.w1 = Mats.random(hiddenSize, inputSize, -1, 1);
+		this.w2 = Mats.random(outputSize, hiddenSize, -1, 1);
+		this.b1 = Mats.random(hiddenSize, 1, -1, 1);
+		this.b2 = Mats.random(outputSize, 1, -1, 1);
 	}
 
 	public Mat predict(Mat input) {
@@ -31,11 +31,11 @@ public class MLPSigmoid implements NeuralNet {
 
 		// Backward pass
 		Mat outputError = Mats.subtract(a2, target); // (10,1)
-		Mat outputGradient = Mats.hadamard(outputError, Mats.dsigmoid(a2)); // (10,1)
+		Mat outputGradient = Mats.hadamard(outputError, Mats.dsigmoid(z2)); // (10,1)
 
 		Mat w2T = Mats.transpose(w2);
 		Mat hiddenError = Mats.dot(w2T, outputGradient); // (64,1)
-		Mat hiddenGradient = Mats.hadamard(hiddenError, Mats.dsigmoid(a1)); // (64,1)
+		Mat hiddenGradient = Mats.hadamard(hiddenError, Mats.dsigmoid(z1)); // (64,1)
 
 		// Update weights and biases
 		Mat a1T = Mats.transpose(a1);

@@ -6,7 +6,7 @@ public class Utils {
 	}
 	
 	public static double dsigmoid(double val) {
-		//val = sigmoid(val);
+		val = sigmoid(val);
 		return val * (1 - val);
 	}
 	

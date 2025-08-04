@@ -41,18 +41,17 @@ public class Mat {
 
 	@Override
 	public String toString() {
-		return shape();
-//		var text = new StringBuilder();
-//		for (int i = 0; i < rows(); i++) {
-//			text.append("[");
-//			for (int j = 0; j < cols(); j++) {
-//				text.append(data[i][j]);
-//				if (j < cols() - 1)
-//					text.append(" ");
-//			}
-//			text.append("]\n");
-//		}
-//		return text.toString();
+		var text = new StringBuilder();
+		for (int i = 0; i < rows(); i++) {
+			text.append("[");
+			for (int j = 0; j < cols(); j++) {
+				text.append(data[i][j]);
+				if (j < cols() - 1)
+					text.append(" ");
+			}
+			text.append("]\n");
+		}
+		return text.toString();
 	}
 
 	public static Mat of(double[][] data) {
